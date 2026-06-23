@@ -5,13 +5,18 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
-// 顏色和氛圍從照片繼承，形態是全新的生物
+// 把照片裡的東西直接「活化」成怪獸：石頭→石頭怪，芒果核→芒果核怪
 const PET_PROMPT =
-  "a cute weird fantasy creature pet, adopting the exact color palette and mood of the reference image, " +
-  "chubby round body, oversized glossy sparkly eyes, bioluminescent glowing spots, " +
-  "2D flat anime illustration style, clean bold outlines, cel shading, chibi kawaii aesthetic, " +
-  "adorable alien creature, solid very dark background, " +
-  "no text, no watermark, no humans, no realistic animals";
+  "transform the main subject of this photo into a living cute cartoon monster, " +
+  "the monster's body IS the original object given life, " +
+  "keep the original object's shape silhouette and texture as the monster body, " +
+  "add big round glossy cartoon eyes, tiny cute limbs, a funny expression, " +
+  "small details like tiny horns or a stubby tail, " +
+  "Pixar cartoon style, bright saturated colors, clean bold outlines, " +
+  "friendly and funny, NOT realistic, full body visible, centered, " +
+  "plain solid black background, soft studio rim light on character, " +
+  "no background elements, no scenery, no other characters, " +
+  "no text, no watermark, no humans";
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,7 +38,7 @@ export async function POST(req: NextRequest) {
       input: {
         prompt: PET_PROMPT,
         image: dataUrl,
-        prompt_strength: 0.82,
+        prompt_strength: 0.62,
         num_inference_steps: 28,
         guidance: 3.5,
         output_format: "webp",

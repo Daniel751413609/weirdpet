@@ -149,9 +149,42 @@ export default function Home() {
 
         {generatedUrl && (
           <div className="space-y-4">
-            <div className="rounded-2xl overflow-hidden border border-purple-500/30 shadow-lg shadow-purple-900/30">
-              <img src={generatedUrl} alt="你的電子寵物" className="w-full object-contain" />
+            {/* 工廠場景：背景是 CSS 做的，怪獸疊在最上層 */}
+            <div
+              className="relative rounded-2xl overflow-hidden border border-purple-500/20 shadow-2xl shadow-purple-950/60"
+              style={{ background: "linear-gradient(180deg, #04060f 0%, #0c1428 55%, #060a14 100%)", minHeight: 340 }}
+            >
+              {/* 地板光暈（工廠燈感） */}
+              <div className="absolute inset-0 pointer-events-none" style={{
+                backgroundImage: [
+                  "radial-gradient(ellipse 90% 35% at 50% 105%, rgba(100,60,255,0.28) 0%, transparent 70%)",
+                  "radial-gradient(ellipse 40% 20% at 15% 100%, rgba(0,210,180,0.12) 0%, transparent 65%)",
+                  "radial-gradient(ellipse 40% 20% at 85% 100%, rgba(255,120,30,0.10) 0%, transparent 65%)",
+                ].join(",")
+              }} />
+              {/* 細格線（工廠牆面感） */}
+              <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{
+                backgroundImage: "linear-gradient(rgba(140,160,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(140,160,255,1) 1px,transparent 1px)",
+                backgroundSize: "44px 44px"
+              }} />
+              {/* 頂部管道光條 */}
+              <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-purple-400/40 to-transparent" />
+              {/* 角落警示燈 */}
+              <div className="absolute top-3 left-3 w-2 h-2 rounded-full bg-red-500 shadow-[0_0_6px_2px_rgba(239,68,68,0.6)] animate-pulse" />
+              <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-teal-400 shadow-[0_0_6px_2px_rgba(45,212,191,0.6)] animate-pulse" />
+              {/* 怪獸主體（z-10 確保在最前） */}
+              <img
+                src={generatedUrl}
+                alt="你的怪獸"
+                className="relative z-10 w-full object-contain"
+                style={{ maxHeight: 400, filter: "drop-shadow(0 8px 32px rgba(120,80,255,0.5))" }}
+              />
+              {/* 底部地板反光 */}
+              <div className="absolute bottom-0 inset-x-0 h-12 pointer-events-none" style={{
+                background: "linear-gradient(to top, rgba(80,40,200,0.18), transparent)"
+              }} />
             </div>
+
             <div className="grid grid-cols-2 gap-3">
               <button onClick={handleDownload} className="flex items-center justify-center gap-2 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 font-semibold text-sm transition-colors">
                 ⬇️ 存到裝置
