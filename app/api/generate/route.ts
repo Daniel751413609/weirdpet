@@ -1,1 +1,73 @@
-aW1wb3J0IHsgTmV4dFJlcXVlc3QsIE5leHRSZXNwb25zZSB9IGZyb20gIm5leHQvc2VydmVyIjsKCmNvbnN0IFBFVF9QUk9NUFQgPQogICJzdXBlciBjdXRlIGNoaWJpIGthd2FpaSBtb25zdGVyIHBldCwgY2h1YmJ5IHJvdW5kIGJvZHksIG92ZXJzaXplZCBnbG9zc3kgc3BhcmtseSBleWVzLCAiICsKICAicGFzdGVsIG5lb24gZmx1ZmZ5IGZ1ciB3aXRoIGdsb3dpbmcgY3J5c3RhbCBob3JucyBhbmQgdGlueSB3aW5ncywgYmlvbHVtaW5lc2NlbnQgc3BvdHMsICIgKwogICIyRCBmbGF0IGFuaW1lIGlsbHVzdHJhdGlvbiBzdHlsZSwgY2xlYW4gYm9sZCBvdXRsaW5lcywgY2VsIHNoYWRpbmcsICIgKwogICJ0YW1hZ290Y2hpIGFlc3RoZXRpYywgYWRvcmFibGUgd2VpcmQgYWxpZW4gY3JlYXR1cmUsIGJ1YmJsZSB0ZWEgcGFzdGVsIGNvbG9ycywgIiArCiAgInNvbGlkIGRhcmsgYmFja2dyb3VuZCwgbm8gdGV4dCBubyB3YXRlcm1hcmssIG5vIGh1bWFucyI7CgpleHBvcnQgYXN5bmMgZnVuY3Rpb24gUE9TVChyZXE6IE5leHRSZXF1ZXN0KSB7CiAgdHJ5IHsKICAgIGNvbnN0IGZvcm1EYXRhID0gYXdhaXQgcmVxLmZvcm1EYXRhKCk7CiAgICBjb25zdCBmaWxlID0gZm9ybURhdGEuZ2V0KCJpbWFnZSIpIGFzIEZpbGUgfCBudWxsOwogICAgaWYgKCFmaWxlKSByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogIuaOpe69kOWFS+WIsOWfn+eZlSIgfSwgeyBzdGF0dXM6IDQwMCB9KTsKCiAgICBjb25zdCBzZWVkID0gTWF0aC5mbG9vcihNYXRoLnJhbmRvbSgpICogOTk5OTk5KTsKICAgIGNvbnN0IHVybCA9IGBodHRwczovL2ltYWdlLnBvbGxpbmF0aW9ucy5haS9wcm9tcHQvJHtlbmNvZGVVUklDb21wb25lbnQoUEVUX1BST01QVCl9P3dpZHRoPTUxMiZoZWlnaHQ9NTEyJm5vbG9nbz10cnVlJm1vZGVsPWZsdXgmc2VlZD0ke3NlZWR9YDsKCiAgICBjb25zdCByZXMgPSBhd2FpdCBmZXRjaCh1cmwsIHsgbWV0aG9kOiAiR0VUIiwgaGVhZGVyczogeyAiVXNlci1BZ2VudCI6ICJXZWlyZFBldC8xLjAiIH0gfSk7CiAgICBpZiAoIXJlcy5vaykgdGhyb3cgbmV3IEVycm9yKGBQb2xsaW5hdGlvbnMg5Zue5oiXICR7cmVzLnN0YXR1c31gKTsKCiAgICBjb25zdCBpbWFnZUJ1ZmZlciA9IGF3YWl0IHJlcy5hcnJheUJ1ZmZlcigpOwogICAgY29uc3QgYmFzZTY0ID0gQnVmZmVyLmZyb20oaW1hZ2VCdWZmZXIpLnRvU3RyaW5nKCJiYXNlNjQiKTsKICAgIGNvbnN0IGNvbnRlbnRUeXBlID0gcmVzLmhlYWRlcnMuZ2V0KCJjb250ZW50LXR5cGUiKSB8fCAiaW1hZ2UvanBlZyI7CiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBpbWFnZVVybDogYGRhdGE6JHtjb250ZW50VHlwZX07YmFzZTY0LCR7YmFzZTY0fWAgfSk7CiAgfSBjYXRjaCAoZXJyKSB7CiAgICBjb25zb2xlLmVycm9yKCJHZW5lcmF0aW9uIGVycm9yOiIsIGVycik7CiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogIkFJIOWfmuWbnuWksei/nO+8jOiri+WGjOS9v+eUqOS4gOastiIgfSwgeyBzdGF0dXM6IDUwMCB9KTsKICB9Cn0K
+import { NextRequest, NextResponse } from "next/server";
+import Replicate from "replicate";
+
+const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_TOKEN,
+});
+
+// 顏色和氛圍從照片繼承，形態是全新的生物
+const PET_PROMPT =
+  "a cute weird fantasy creature pet, adopting the exact color palette and mood of the reference image, " +
+  "chubby round body, oversized glossy sparkly eyes, bioluminescent glowing spots, " +
+  "2D flat anime illustration style, clean bold outlines, cel shading, chibi kawaii aesthetic, " +
+  "adorable alien creature, solid very dark background, " +
+  "no text, no watermark, no humans, no realistic animals";
+
+export async function POST(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+    const file = formData.get("image") as File | null;
+
+    if (!file) {
+      return NextResponse.json({ error: "沒有收到圖片" }, { status: 400 });
+    }
+
+    // 把照片轉成 base64 給 Replicate
+    const buffer = await file.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString("base64");
+    const mimeType = file.type || "image/jpeg";
+    const dataUrl = `data:${mimeType};base64,${base64}`;
+
+    // FLUX img2img：照片的顏色/氛圍 → 召喚出對應的生物
+    const output = await replicate.run("black-forest-labs/flux-dev", {
+      input: {
+        prompt: PET_PROMPT,
+        image: dataUrl,
+        prompt_strength: 0.82,
+        num_inference_steps: 28,
+        guidance: 3.5,
+        output_format: "webp",
+        output_quality: 90,
+      },
+    });
+
+    // 取得生成圖片 URL
+    const outputArr = output as { url: () => Promise<string> }[] | string[];
+    let generatedUrl: string;
+
+    if (Array.isArray(outputArr) && outputArr.length > 0) {
+      const first = outputArr[0];
+      generatedUrl = typeof first === "string" ? first : await first.url();
+    } else {
+      throw new Error("Replicate 沒有回傳圖片");
+    }
+
+    // 把圖片抓回來轉 base64（避免前端跨域問題）
+    const imgRes = await fetch(generatedUrl);
+    if (!imgRes.ok) throw new Error("無法取得生成圖片");
+
+    const imgBuffer = await imgRes.arrayBuffer();
+    const imgBase64 = Buffer.from(imgBuffer).toString("base64");
+    const contentType = imgRes.headers.get("content-type") || "image/webp";
+
+    return NextResponse.json({
+      imageUrl: `data:${contentType};base64,${imgBase64}`,
+    });
+  } catch (err) {
+    console.error("Generation error:", err);
+    return NextResponse.json(
+      { error: "AI 召喚失敗，請再試一次" },
+      { status: 500 }
+    );
+  }
+}
